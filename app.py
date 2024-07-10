@@ -57,7 +57,8 @@ for i in range(num_accounts):
     accounts.append((account_name, account_type, account_balance))
 
 # Initialize allocations
-allocations = []
+if 'allocations' not in st.session_state:
+    st.session_state.allocations = []
 
 # Portfolio Allocation
 st.header("Portfolio Allocation")
@@ -76,15 +77,16 @@ def get_portfolio_allocation(goal_type):
 def allocate_portfolio(goals):
     allocations = []
     for goal in goals:
-        if "retirement income" in goal[0].lower():
+        goal_name = goal[0].lower()
+        if "retirement" in goal_name:
             goal_type = "Long-term Lifestyle"
-        elif "short-term" in goal[0].lower():
+        elif "short-term" in goal_name or "vacation" in goal_name:
             goal_type = "Short-term Lifestyle"
-        elif "long-term" in goal[0].lower():
+        elif "long-term" in goal_name or "education" in goal_name:
             goal_type = "Long-term Lifestyle"
-        elif "purchasing power" in goal[0].lower():
+        elif "purchasing power" in goal_name:
             goal_type = "Purchasing Power Protection"
-        elif "growth" in goal[0].lower():
+        elif "growth" in goal_name:
             goal_type = "Growth"
         else:
             goal_type = "Uncategorized"
@@ -94,11 +96,11 @@ def allocate_portfolio(goals):
     return allocations
 
 if st.button("Generate Portfolio"):
-    allocations = allocate_portfolio(goals)
+    st.session_state.allocations = allocate_portfolio(goals)
     st.subheader("Goal Allocations")
     total_allocation = {"Cash": 0, "Bonds": 0, "Stocks": 0}
 
-    for allocation in allocations:
+    for allocation in st.session_state.allocations:
         st.write(f"Goal: {allocation['Goal']}")
         st.write(f"Type: {allocation['Type']}")
         st.write(f"Allocation: {allocation['Allocation']}")
@@ -119,7 +121,7 @@ st.write("This feature will display the aggregated portfolio across multiple acc
 
 # Generate Investment Policy Statement (IPS)
 if st.button("Generate IPS"):
-    if allocations:
+    if st.session_state.allocations:
         ips = f"# Investment Policy Statement\n\n"
         ips += f"## Client Name: {client_name}\n"
         ips += f"## Client Age: {client_age}\n"
@@ -128,7 +130,7 @@ if st.button("Generate IPS"):
         for account in accounts:
             ips += f"- {account[0]} ({account[1]}): ${account[2]}\n"
         ips += f"\n## Goal Allocations:\n"
-        for allocation in allocations:
+        for allocation in st.session_state.allocations:
             ips += f"- Goal: {allocation['Goal']}, Type: {allocation['Type']}, Allocation: {allocation['Allocation']}\n"
 
         st.download_button(label="Download IPS", data=ips, file_name="investment_policy_statement.md", mime="text/markdown")
