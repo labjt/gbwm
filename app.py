@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Title
 st.title("Goals-Based Wealth Management Prototype")
@@ -7,7 +8,6 @@ st.title("Goals-Based Wealth Management Prototype")
 st.header("Client Information")
 client_name = st.text_input("Client Name")
 client_age = st.number_input("Client Age", min_value=18)
-risk_tolerance = st.selectbox("Overall Risk Tolerance", ("Low", "Medium", "High"))
 financial_goals = st.text_area("Financial Goals (e.g., Retirement, Education, Philanthropy)")
 
 # Detailed Goal Inputs
@@ -20,48 +20,79 @@ for i in range(num_goals):
     goal_name = st.text_input(f"Goal {i+1} Name")
     goal_amount = st.number_input(f"Goal {i+1} Amount ($)", min_value=0)
     goal_horizon = st.number_input(f"Goal {i+1} Time Horizon (years)", min_value=0)
-    goal_risk_tolerance = st.selectbox(f"Goal {i+1} Risk Tolerance", ("Low", "Medium", "High"))
-    goals.append((goal_name, goal_amount, goal_horizon, goal_risk_tolerance))
+    goals.append((goal_name, goal_amount, goal_horizon))
 
 current_assets = st.number_input("Current Assets ($)", min_value=0)
 income = st.number_input("Annual Income ($)", min_value=0)
 expenses = st.number_input("Annual Expenses ($)", min_value=0)
 
+# Account Types Input
+st.header("Account Types")
+num_accounts = st.number_input("Number of Accounts", min_value=1, max_value=10, step=1)
+
+accounts = []
+for i in range(num_accounts):
+    st.subheader(f"Account {i+1}")
+    account_name = st.text_input(f"Account {i+1} Name")
+    account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", "IRA", "Taxable"])
+    account_balance = st.number_input(f"Account {i+1} Balance ($)", min_value=0)
+    accounts.append((account_name, account_type, account_balance))
+
 # Portfolio Allocation
 st.header("Portfolio Allocation")
 
-def allocate_portfolio(risk_tolerance):
-    if risk_tolerance == "Low":
-        return {"Safety": 70, "Market": 20, "Aspirational": 10}
-    elif risk_tolerance == "Medium":
-        return {"Safety": 50, "Market": 30, "Aspirational": 20}
-    else:
-        return {"Safety": 30, "Market": 40, "Aspirational": 30}
-
-def detailed_allocation(goal_risk_tolerance):
-    if goal_risk_tolerance == "Low":
-        return {"Safety": 80, "Market": 15, "Aspirational": 5}
-    elif goal_risk_tolerance == "Medium":
-        return {"Safety": 60, "Market": 30, "Aspirational": 10}
-    else:
-        return {"Safety": 40, "Market": 40, "Aspirational": 20}
+def allocate_portfolio(goals):
+    allocations = []
+    for goal in goals:
+        if "short-term" in goal[0].lower():
+            allocations.append({"Goal": goal[0], "Type": "Short-term Lifestyle", "Allocation": "Brunel's Short-term Allocation"})
+        elif "long-term" in goal[0].lower():
+            allocations.append({"Goal": goal[0], "Type": "Long-term Lifestyle", "Allocation": "Brunel's Long-term Allocation"})
+        elif "purchasing power" in goal[0].lower():
+            allocations.append({"Goal": goal[0], "Type": "Purchasing Power Protection", "Allocation": "Brunel's PP Allocation"})
+        elif "growth" in goal[0].lower():
+            allocations.append({"Goal": goal[0], "Type": "Growth", "Allocation": "Brunel's Growth Allocation"})
+        else:
+            allocations.append({"Goal": goal[0], "Type": "Uncategorized", "Allocation": "Brunel's Default Allocation"})
+    return allocations
 
 if st.button("Generate Portfolio"):
-    overall_allocation = allocate_portfolio(risk_tolerance)
-    st.subheader("Overall Allocation")
-    st.write(f"Safety Bucket: {overall_allocation['Safety']}%")
-    st.write(f"Market Bucket: {overall_allocation['Market']}%")
-    st.write(f"Aspirational Bucket: {overall_allocation['Aspirational']}%")
+    allocations = allocate_portfolio(goals)
+    st.subheader("Goal Allocations")
+    for allocation in allocations:
+        st.write(f"Goal: {allocation['Goal']}")
+        st.write(f"Type: {allocation['Type']}")
+        st.write(f"Allocation: {allocation['Allocation']}")
+        st.write("---")
 
-    for i, (goal_name, goal_amount, goal_horizon, goal_risk_tolerance) in enumerate(goals):
-        goal_allocation = detailed_allocation(goal_risk_tolerance)
-        st.subheader(f"Allocation for {goal_name}")
-        st.write(f"Safety Bucket: {goal_allocation['Safety']}%")
-        st.write(f"Market Bucket: {goal_allocation['Market']}%")
-        st.write(f"Aspirational Bucket: {goal_allocation['Aspirational']}%")
-    
     st.success("Portfolio generated successfully!")
 
 # Display Aggregated Portfolio
 st.header("Aggregated Portfolio View")
 st.write("This feature will display the aggregated portfolio across multiple accounts.")
+
+# Generate Investment Policy Statement (IPS)
+if st.button("Generate IPS"):
+    ips = f"# Investment Policy Statement\n\n"
+    ips += f"## Client Name: {client_name}\n"
+    ips += f"## Client Age: {client_age}\n"
+    ips += f"## Financial Goals: {financial_goals}\n\n"
+    ips += f"## Account Types:\n"
+    for account in accounts:
+        ips += f"- {account[0]} ({account[1]}): ${account[2]}\n"
+    ips += f"\n## Goal Allocations:\n"
+    for allocation in allocations:
+        ips += f"- Goal: {allocation['Goal']}, Type: {allocation['Type']}, Allocation: {allocation['Allocation']}\n"
+
+    st.download_button(label="Download IPS", data=ips, file_name="investment_policy_statement.md", mime="text/markdown")
+    st.success("Investment Policy Statement generated successfully!")
+
+# Disclaimer
+st.header("Disclaimer")
+st.write("This software is for demonstration purposes only. It does not guarantee any results. Please consult with a financial advisor before making any investment decisions.")
+
+# Commit and Push Changes
+commit_and_push = """
+git add app.py && git commit -m "Update Streamlit app with detailed goals and allocation based on Brunel's methodology" && git push origin main
+"""
+st.code(commit_and_push, language="bash")
