@@ -10,11 +10,29 @@ client_name = st.text_input("Client Name")
 client_age = st.number_input("Client Age", min_value=18)
 financial_goals = st.text_area("Financial Goals (e.g., Retirement, Education, Philanthropy)")
 
-# Detailed Goal Inputs
-st.header("Detailed Goals")
-num_goals = st.number_input("Number of Goals", min_value=1, max_value=10, step=1)
+# Retirement Income Goal
+st.header("Retirement Income Goal")
+annual_retirement_income = st.number_input("Desired Annual Retirement Income ($)", min_value=0)
+retirement_duration = st.number_input("Total Retirement Duration (years)", min_value=0)
 
-goals = []
+# Define likelihood of success for different periods
+first_period_years = 5
+first_period_likelihood = 0.95
+second_period_years = retirement_duration - first_period_years
+second_period_likelihood = 0.75
+
+# Calculate total goal amount for retirement income
+first_period_amount = annual_retirement_income * first_period_years * first_period_likelihood
+second_period_amount = annual_retirement_income * second_period_years * second_period_likelihood
+total_retirement_goal = first_period_amount + second_period_amount
+
+st.write(f"Total Retirement Goal Amount: ${total_retirement_goal:,.2f}")
+
+# Detailed Goal Inputs
+st.header("Other Goals")
+num_goals = st.number_input("Number of Other Goals", min_value=0, max_value=10, step=1)
+
+goals = [("Retirement Income", total_retirement_goal, retirement_duration)]
 for i in range(num_goals):
     st.subheader(f"Goal {i+1}")
     goal_name = st.text_input(f"Goal {i+1} Name")
@@ -44,7 +62,9 @@ st.header("Portfolio Allocation")
 def allocate_portfolio(goals):
     allocations = []
     for goal in goals:
-        if "short-term" in goal[0].lower():
+        if "retirement income" in goal[0].lower():
+            allocations.append({"Goal": goal[0], "Type": "Retirement", "Allocation": "Brunel's Retirement Allocation"})
+        elif "short-term" in goal[0].lower():
             allocations.append({"Goal": goal[0], "Type": "Short-term Lifestyle", "Allocation": "Brunel's Short-term Allocation"})
         elif "long-term" in goal[0].lower():
             allocations.append({"Goal": goal[0], "Type": "Long-term Lifestyle", "Allocation": "Brunel's Long-term Allocation"})
