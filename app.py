@@ -34,7 +34,7 @@ accounts = []
 for i in range(num_accounts):
     st.subheader(f"Account {i+1}")
     account_name = st.text_input(f"Account {i+1} Name")
-    account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", IRA", "Taxable"])
+    account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", "IRA", "Taxable"])
     account_balance = st.number_input(f"Account {i+1} Balance ($)", min_value=0)
     accounts.append((account_name, account_type, account_balance))
 
