@@ -59,31 +59,54 @@ for i in range(num_accounts):
 # Portfolio Allocation
 st.header("Portfolio Allocation")
 
+def get_portfolio_allocation(goal_type):
+    if goal_type == "Short-term Lifestyle":
+        return {"Cash": 50, "Bonds": 30, "Stocks": 20}
+    elif goal_type == "Long-term Lifestyle":
+        return {"Cash": 20, "Bonds": 40, "Stocks": 40}
+    elif goal_type == "Purchasing Power Protection":
+        return {"Cash": 10, "Bonds": 30, "Stocks": 60}
+    elif goal_type == "Growth":
+        return {"Cash": 5, "Bonds": 15, "Stocks": 80}
+    return {"Cash": 0, "Bonds": 0, "Stocks": 0}
+
 def allocate_portfolio(goals):
     allocations = []
     for goal in goals:
         if "retirement income" in goal[0].lower():
-            allocations.append({"Goal": goal[0], "Type": "Retirement", "Allocation": "Brunel's Retirement Allocation"})
+            goal_type = "Long-term Lifestyle"
         elif "short-term" in goal[0].lower():
-            allocations.append({"Goal": goal[0], "Type": "Short-term Lifestyle", "Allocation": "Brunel's Short-term Allocation"})
+            goal_type = "Short-term Lifestyle"
         elif "long-term" in goal[0].lower():
-            allocations.append({"Goal": goal[0], "Type": "Long-term Lifestyle", "Allocation": "Brunel's Long-term Allocation"})
+            goal_type = "Long-term Lifestyle"
         elif "purchasing power" in goal[0].lower():
-            allocations.append({"Goal": goal[0], "Type": "Purchasing Power Protection", "Allocation": "Brunel's PP Allocation"})
+            goal_type = "Purchasing Power Protection"
         elif "growth" in goal[0].lower():
-            allocations.append({"Goal": goal[0], "Type": "Growth", "Allocation": "Brunel's Growth Allocation"})
+            goal_type = "Growth"
         else:
-            allocations.append({"Goal": goal[0], "Type": "Uncategorized", "Allocation": "Brunel's Default Allocation"})
+            goal_type = "Uncategorized"
+
+        allocation = get_portfolio_allocation(goal_type)
+        allocations.append({"Goal": goal[0], "Type": goal_type, "Allocation": allocation})
     return allocations
 
 if st.button("Generate Portfolio"):
     allocations = allocate_portfolio(goals)
     st.subheader("Goal Allocations")
+    total_allocation = {"Cash": 0, "Bonds": 0, "Stocks": 0}
+
     for allocation in allocations:
         st.write(f"Goal: {allocation['Goal']}")
         st.write(f"Type: {allocation['Type']}")
         st.write(f"Allocation: {allocation['Allocation']}")
         st.write("---")
+        for asset_class, percentage in allocation['Allocation'].items():
+            total_allocation[asset_class] += percentage
+
+    st.subheader("Total Portfolio Allocation")
+    total_percentage = sum(total_allocation.values())
+    for asset_class, percentage in total_allocation.items():
+        st.write(f"{asset_class}: {percentage / total_percentage * 100:.2f}%")
 
     st.success("Portfolio generated successfully!")
 
