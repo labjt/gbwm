@@ -34,7 +34,7 @@ accounts = []
 for i in range(num_accounts):
     st.subheader(f"Account {i+1}")
     account_name = st.text_input(f"Account {i+1} Name")
-    account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", "IRA", "Taxable"])
+    account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", IRA", "Taxable"])
     account_balance = st.number_input(f"Account {i+1} Balance ($)", min_value=0)
     accounts.append((account_name, account_type, account_balance))
 
@@ -90,9 +90,3 @@ if st.button("Generate IPS"):
 # Disclaimer
 st.header("Disclaimer")
 st.write("This software is for demonstration purposes only. It does not guarantee any results. Please consult with a financial advisor before making any investment decisions.")
-
-# Commit and Push Changes
-commit_and_push = """
-git add app.py && git commit -m "Update Streamlit app with detailed goals and allocation based on Brunel's methodology" && git push origin main
-"""
-st.code(commit_and_push, language="bash")
