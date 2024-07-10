@@ -10,6 +10,9 @@ client_name = st.text_input("Client Name")
 client_age = st.number_input("Client Age", min_value=18)
 financial_goals = st.text_area("Financial Goals (e.g., Retirement, Education, Philanthropy)")
 
+# Divider
+st.markdown("---")
+
 # Retirement Income Goal
 st.header("Retirement Income Goal")
 annual_retirement_income = st.number_input("Desired Annual Retirement Income ($)", min_value=0)
@@ -28,6 +31,9 @@ total_retirement_goal = first_period_amount + second_period_amount
 
 st.write(f"Total Retirement Goal Amount: ${total_retirement_goal:,.2f}")
 
+# Divider
+st.markdown("---")
+
 # Detailed Goal Inputs
 st.header("Other Goals")
 num_goals = st.number_input("Number of Other Goals", min_value=0, max_value=10, step=1)
@@ -40,9 +46,15 @@ for i in range(num_goals):
     goal_horizon = st.number_input(f"Goal {i+1} Time Horizon (years)", min_value=0)
     goals.append((goal_name, goal_amount, goal_horizon))
 
+# Divider
+st.markdown("---")
+
 current_assets = st.number_input("Current Assets ($)", min_value=0)
 income = st.number_input("Annual Income ($)", min_value=0)
 expenses = st.number_input("Annual Expenses ($)", min_value=0)
+
+# Divider
+st.markdown("---")
 
 # Account Types Input
 st.header("Account Types")
@@ -55,6 +67,9 @@ for i in range(num_accounts):
     account_type = st.selectbox(f"Account {i+1} Type", ["Roth IRA", "IRA", "Taxable"])
     account_balance = st.number_input(f"Account {i+1} Balance ($)", min_value=0)
     accounts.append((account_name, account_type, account_balance))
+
+# Divider
+st.markdown("---")
 
 # Initialize allocations
 if 'allocations' not in st.session_state:
@@ -115,6 +130,9 @@ if st.button("Generate Portfolio"):
 
     st.success("Portfolio generated successfully!")
 
+# Divider
+st.markdown("---")
+
 # Display Aggregated Portfolio
 st.header("Aggregated Portfolio View")
 st.write("This feature will display the aggregated portfolio across multiple accounts.")
@@ -137,6 +155,9 @@ if st.button("Generate IPS"):
         st.success("Investment Policy Statement generated successfully!")
     else:
         st.error("Please generate the portfolio before creating the IPS.")
+
+# Divider
+st.markdown("---")
 
 # Disclaimer
 st.header("Disclaimer")
