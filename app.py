@@ -118,20 +118,23 @@ st.header("Aggregated Portfolio View")
 st.write("This feature will display the aggregated portfolio across multiple accounts.")
 
 # Generate Investment Policy Statement (IPS)
-if st.button("Generate IPS") and allocations:
-    ips = f"# Investment Policy Statement\n\n"
-    ips += f"## Client Name: {client_name}\n"
-    ips += f"## Client Age: {client_age}\n"
-    ips += f"## Financial Goals: {financial_goals}\n\n"
-    ips += f"## Account Types:\n"
-    for account in accounts:
-        ips += f"- {account[0]} ({account[1]}): ${account[2]}\n"
-    ips += f"\n## Goal Allocations:\n"
-    for allocation in allocations:
-        ips += f"- Goal: {allocation['Goal']}, Type: {allocation['Type']}, Allocation: {allocation['Allocation']}\n"
+if st.button("Generate IPS"):
+    if allocations:
+        ips = f"# Investment Policy Statement\n\n"
+        ips += f"## Client Name: {client_name}\n"
+        ips += f"## Client Age: {client_age}\n"
+        ips += f"## Financial Goals: {financial_goals}\n\n"
+        ips += f"## Account Types:\n"
+        for account in accounts:
+            ips += f"- {account[0]} ({account[1]}): ${account[2]}\n"
+        ips += f"\n## Goal Allocations:\n"
+        for allocation in allocations:
+            ips += f"- Goal: {allocation['Goal']}, Type: {allocation['Type']}, Allocation: {allocation['Allocation']}\n"
 
-    st.download_button(label="Download IPS", data=ips, file_name="investment_policy_statement.md", mime="text/markdown")
-    st.success("Investment Policy Statement generated successfully!")
+        st.download_button(label="Download IPS", data=ips, file_name="investment_policy_statement.md", mime="text/markdown")
+        st.success("Investment Policy Statement generated successfully!")
+    else:
+        st.error("Please generate the portfolio before creating the IPS.")
 
 # Disclaimer
 st.header("Disclaimer")
