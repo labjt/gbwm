@@ -56,6 +56,9 @@ for i in range(num_accounts):
     account_balance = st.number_input(f"Account {i+1} Balance ($)", min_value=0)
     accounts.append((account_name, account_type, account_balance))
 
+# Initialize allocations
+allocations = []
+
 # Portfolio Allocation
 st.header("Portfolio Allocation")
 
@@ -115,7 +118,7 @@ st.header("Aggregated Portfolio View")
 st.write("This feature will display the aggregated portfolio across multiple accounts.")
 
 # Generate Investment Policy Statement (IPS)
-if st.button("Generate IPS"):
+if st.button("Generate IPS") and allocations:
     ips = f"# Investment Policy Statement\n\n"
     ips += f"## Client Name: {client_name}\n"
     ips += f"## Client Age: {client_age}\n"
