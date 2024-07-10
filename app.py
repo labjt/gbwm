@@ -12,17 +12,16 @@ financial_goals = st.text_area("Financial Goals (e.g., Retirement, Education, Ph
 
 # Detailed Goal Inputs
 st.header("Detailed Goals")
-goal1_name = st.text_input("Goal 1 Name")
-goal1_amount = st.number_input("Goal 1 Amount ($)", min_value=0)
-goal1_horizon = st.number_input("Goal 1 Time Horizon (years)", min_value=0)
-goal1_risk_tolerance = st.selectbox("Goal 1 Risk Tolerance", ("Low", "Medium", "High"))
+num_goals = st.number_input("Number of Goals", min_value=1, max_value=10, step=1)
 
-goal2_name = st.text_input("Goal 2 Name")
-goal2_amount = st.number_input("Goal 2 Amount ($)", min_value=0)
-goal2_horizon = st.number_input("Goal 2 Time Horizon (years)", min_value=0)
-goal2_risk_tolerance = st.selectbox("Goal 2 Risk Tolerance", ("Low", "Medium", "High"))
-
-# More goals can be added similarly...
+goals = []
+for i in range(num_goals):
+    st.subheader(f"Goal {i+1}")
+    goal_name = st.text_input(f"Goal {i+1} Name")
+    goal_amount = st.number_input(f"Goal {i+1} Amount ($)", min_value=0)
+    goal_horizon = st.number_input(f"Goal {i+1} Time Horizon (years)", min_value=0)
+    goal_risk_tolerance = st.selectbox(f"Goal {i+1} Risk Tolerance", ("Low", "Medium", "High"))
+    goals.append((goal_name, goal_amount, goal_horizon, goal_risk_tolerance))
 
 current_assets = st.number_input("Current Assets ($)", min_value=0)
 income = st.number_input("Annual Income ($)", min_value=0)
@@ -49,23 +48,17 @@ def detailed_allocation(goal_risk_tolerance):
 
 if st.button("Generate Portfolio"):
     overall_allocation = allocate_portfolio(risk_tolerance)
-    goal1_allocation = detailed_allocation(goal1_risk_tolerance)
-    goal2_allocation = detailed_allocation(goal2_risk_tolerance)
-    
     st.subheader("Overall Allocation")
     st.write(f"Safety Bucket: {overall_allocation['Safety']}%")
     st.write(f"Market Bucket: {overall_allocation['Market']}%")
     st.write(f"Aspirational Bucket: {overall_allocation['Aspirational']}%")
 
-    st.subheader(f"Allocation for {goal1_name}")
-    st.write(f"Safety Bucket: {goal1_allocation['Safety']}%")
-    st.write(f"Market Bucket: {goal1_allocation['Market']}%")
-    st.write(f"Aspirational Bucket: {goal1_allocation['Aspirational']}%")
-
-    st.subheader(f"Allocation for {goal2_name}")
-    st.write(f"Safety Bucket: {goal2_allocation['Safety']}%")
-    st.write(f"Market Bucket: {goal2_allocation['Market']}%")
-    st.write(f"Aspirational Bucket: {goal2_allocation['Aspirational']}%")
+    for i, (goal_name, goal_amount, goal_horizon, goal_risk_tolerance) in enumerate(goals):
+        goal_allocation = detailed_allocation(goal_risk_tolerance)
+        st.subheader(f"Allocation for {goal_name}")
+        st.write(f"Safety Bucket: {goal_allocation['Safety']}%")
+        st.write(f"Market Bucket: {goal_allocation['Market']}%")
+        st.write(f"Aspirational Bucket: {goal_allocation['Aspirational']}%")
     
     st.success("Portfolio generated successfully!")
 
